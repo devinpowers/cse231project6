@@ -52,15 +52,15 @@ def shoots_left_right(master_list):
     
     for line in master_list:
         s_c = line[1]
-        
+     
         for data in s_c:
             
-            if data == 'R':
-                righty += 1
             if data == 'L':
                 lefty += 1
+            if data == 'R':
+                righty += 1
                 
-    return lefty, righty
+    return righty, lefty
         
 def position(master_list):
     
@@ -95,7 +95,7 @@ def off_side_shooter(master_list):
         left_or_right = line[1]
         position = line[2]
         
-        for line in left_or_right,position:
+        for line in left_or_right and position:
             if left_or_right == 'R'and position == 'L':
                 left_wing_shoots_right += 1
             if left_or_right == 'L' and position == 'R':
@@ -111,7 +111,7 @@ def points_per_game(master_list):
     
     for line in master_list:
         player_name = str(line[0])
-        points_per_game = (line[20])
+        points_per_game = (line[18])
         position = line[2]
     
         
@@ -120,11 +120,12 @@ def points_per_game(master_list):
         list_tuple.append(tuple_line)
         
         """ sort and list only the top 10"""
-        list_tuple.sort()
-        list_tuple = list_tuple[0:9]
+        list_tuple.sort(key=lambda x:x[0], reverse = True)
+  
+        list_tuple = list_tuple[0:10]
     
     # returns top 10
-    return list_tuple, player_name, points_per_game, position
+    return list_tuple
     
 
 
@@ -141,8 +142,10 @@ def games_played(master_list):
         
         list_of_games_played.append(tuple_of_games_playerd)
         
-        list_of_games_played.sort()
-        list_of_games_played =  list_of_games_played[0:9]
+        """ sort and list only the top 10"""
+        
+        list_of_games_played.sort(key=lambda  x:x[1], reverse = True)
+        list_of_games_played =  list_of_games_played[0:10]
         
         
     return list_of_games_played
@@ -153,22 +156,28 @@ def shots_taken(master_list):
     
     list_of_shots_taken = []
     
-    word = "--"
     
     for line in master_list:
+        player_name = str(line[0])
         
-        if not word in line: 
-            player_name = str(line[0])
+        if line[9] in (None, '--'):
+            pass
+        else:
             shots_taken = int(line[9].replace(',',''))
         
-      
+        
                 
             tuple_of_shots_taken = ((shots_taken), player_name)
-                
+            
+            """ sort and list only the top 10 shots taken"""
+            
             list_of_shots_taken.append(tuple_of_shots_taken)
-                
-            list_of_shots_taken.sort()
-            list_of_shots_taken[0:9]
+            list_of_shots_taken.sort(key = lambda  x:x[0], reverse = True)
+            
+            
+            
+             
+    list_of_shots_taken = list_of_shots_taken[0:10]   
                 
     return list_of_shots_taken
         
@@ -185,56 +194,72 @@ def main():
    
    righty, lefty = shoots_left_right(master_list)
    
-   print(" Shooting")
+   print(("{:^10s}".format("Shooting")))
 
-   print('Left:  ',lefty)
-   print("Right: ", righty)
+   print("left:  {:4d}".format (lefty))
    
+
+   print("right: {:4d}".format( righty))
    
+
    # position
    
    left_wing, right_wing, center, defense = position(master_list)
    
-   print("\n Position")
-   print('Left:    ',    left_wing)
-   print('Right:   ',   right_wing)
-   print("Center:  ",  center)
-   print("Defense: ", defense)
+   print("\n{:^12s}".format("Position"))
+   print("left:    {:4d}".format(left_wing))
+   print("right:   {:4d}".format(right_wing))
+   print("center:  {:4d}".format(  center))
+   print("defense: {:4d}".format( defense))
    
   #off-side shoots
     
    left_wing_shoots_right, right_wing_shoots_left = off_side_shooter(master_list)
     
-   print("\n     Off-side Shooter")
-   print('left wing shooting right: ', left_wing_shoots_right)
-   print('right wing shooting left: ', right_wing_shoots_left)
+   print("\n{:^24s}".format("Off-side Shooter"))
+   print("left-wing shooting right: {:4d}".format(left_wing_shoots_right))
+
+   print("right-wing shooting left: {:4d}".format(right_wing_shoots_left))
+   
    
    #Top Ten Points-Per-Game
       
    list_tuple  = points_per_game(master_list)
    
    
-   print("\n Top Ten Points-Per-Game")
+   print("\n{:^36s}".format("\nTop Ten Points-Per-Game"))
    
-  
-         
+   print("{:<20s}{:>8s}{:>16s}".format("Player", "Position", "Points Per Game"))
+   
+   for line in list_tuple:
+       print("{:<20s}{:>8s}{:>16.2f}".format(line[1],line[2],line[0]))
+       
+   
 
-   print("\nheres a list:",list_tuple)
-   
+
 
    
    #games played
    
    list_of_games_played = games_played(master_list)
    
-   print("\ntuple for games played by each player:", list_of_games_played)
+   print("\n{:^36s}".format("Top Ten Games-Played"))
+   print("{:<20s}{:>16s}".format("Player", "Games"))
    
+   for row in list_of_games_played:
+       print("{:<20s}{:>16,d}".format(row[0],row[1]))
+
+  
    
+
    # list of shots taken
    
    list_of_shots_taken = shots_taken(master_list)
    
-   print("\n the number of shots taken by players and there name:", list_of_shots_taken)
+   print("\n{:^36s}".format("Top Ten Shots-Taken"))
+   
+   for line in list_of_shots_taken:
+       print("{:<20s}{:>16,d}".format(line[1],line[0]))
    
     
   
